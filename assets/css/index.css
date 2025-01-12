@@ -1,0 +1,379 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: .5s;
+}
+
+:root{
+    --background: #222;
+    --text: #eee;
+    --theme: #5f1ed2;
+}
+
+html{
+    background-color: var(--background);
+    color: var(--text);
+    transition: .5s;
+    height: 100dvh;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    /* font-family: "Ubuntu", sans-serif; */
+}
+
+*:focus{
+    outline: 0;
+}
+
+/* generic styles */
+
+button{
+    display: block;
+    background-color: var(--theme);
+    color: var(--text);
+    border-radius: .75rem;
+    font-size: 1.25rem;
+    border: 0;
+    cursor: pointer;
+    padding: .65rem;
+}
+
+button:hover, button:focus{
+    background-color: #2a086477;
+}
+
+button:disabled{
+    background-color: #777;
+}
+
+.transparent-btn{
+    background-color: transparent;
+}
+
+.transparent-btn:hover, .transparent-btn:focus{
+    background-color: transparent;
+    border: 1.5px dashed;
+}
+
+ul{
+    list-style-type: none;
+}
+
+/* end of generic styles */
+
+header{
+    background-color: var(--theme);
+    width: 85%;
+    margin: .35rem auto 1rem;
+    border-radius: .75rem;
+}
+
+header nav{
+    padding: .5rem;
+    border-radius: .75rem;
+}
+
+header nav ul{
+    display: flex;
+    justify-content: space-evenly;
+    /* grid-template-columns: 1fr 1fr; */
+    /* justify-content: space-evenly; */
+}
+
+header nav ul li{
+    text-align: center;
+}
+
+.ham{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 25%;
+}
+
+#score-wrap{
+    display: none;
+}
+
+#score-wrap h4{
+    background-color: var(--text);
+    color: var(--background);
+    padding: 1px .5rem;
+    width: auto;
+    height: 5rem;
+    /* border-radius: 100%; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    font-size: 2rem;
+}
+
+#two-player-mode{
+    border-radius: .75rem;
+    width: 80%;
+}
+
+h4#two-player-mode{
+    font-size: 1.2rem;
+}
+
+#two-player-mode p{
+    width: 100%;
+    padding: .125rem;
+}
+
+.constraint{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+#constraint{
+    font-size: 2.5rem;
+}
+
+.info{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.info p{
+    text-align: center;
+}
+
+#tiles-grid{
+    /* border: 1px solid; */
+    background-color: #3337;
+    height: 32rem;
+    margin: 1rem .85rem;
+    border-radius: 1rem;
+    padding: .5rem;
+    box-shadow: 0 0 9px 1px #5557;
+}
+
+#tiles-grid ul{
+    /* border: 1px solid; */
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+#tiles-grid ul li{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: .25rem;
+    margin: auto;
+    /* width: 3rem;
+    height: 3rem; */
+    /* border: 1px solid; */
+}
+
+#tiles-grid ul li button{
+    font-size: 1.5rem;
+    text-align: center;
+    display: block;
+    width: 3rem;
+    height: 3rem;
+    transform: rotateY(180deg);
+    color: transparent
+}
+
+#tiles-grid ul li button:hover, #tiles-grid ul li button:focus{
+    color: transparent;
+}
+
+#modalbg{
+    background-color: #3339;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding-top: 10dvh;
+    backdrop-filter: blur(5px);
+    display: none;
+}
+
+#modal{
+    background-color: var(--background);
+    width: 80%;
+    padding: 1rem;
+    border-radius: .5rem;
+    margin: auto;
+    box-shadow: 0 0 60px 0px #7777;
+}
+
+.complete{
+    text-align: center;
+}
+
+.complete *{
+    margin-bottom: 1rem;
+}
+
+.complete h1{
+    font-size: 4rem;
+}
+
+.complete button{
+    margin: auto;
+    margin-top: 1.25rem;
+}
+
+#modal h1, #modal h2{
+    text-align: center;
+    margin-bottom: .5rem;
+}
+
+#modal ul{
+    list-style-type: none;
+    padding: .5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+#modal ul li{
+    margin: 1rem auto;
+}
+
+#modal form{
+    padding: .5rem;
+}
+
+#modal .field{
+    padding: .5rem;
+    margin: 1rem auto;
+    display: flex;
+    justify-content: center;
+}
+
+#modal input{
+    background-color: transparent;
+    border: 1.5px solid var(--text);
+    padding: .75rem;
+    font-size: 1.2rem;
+    color: var(--text);
+    border-radius: .65rem;
+    display: block;
+    text-align: center;
+    margin: auto;
+}
+
+#modal input:focus{
+    box-shadow: 0 0 1px 4px #aaa7;
+}
+
+.pseudo{
+    display: none;
+}
+
+#modal .back-btn{
+    position: absolute;
+}
+
+#modal small em{
+    display: block;
+    text-align: center;
+
+}
+
+.message{
+    text-align: center;
+    padding: .5rem;
+}
+
+.message p{
+    padding: .75rem;
+    font-size: 1.25rem;
+}
+
+.message button{
+    margin: auto;
+}
+
+ul#menu-list li{
+    margin: .5rem auto;
+    display: block;
+    width: 100%;
+}
+
+ul#menu-list h3{
+    text-align: center;
+}
+
+.menu ul li button{
+    text-align: center;
+    display: block;
+    width: 100%;
+    padding: .85rem;
+}
+
+ul#contacts{
+    display: flex;
+    flex-wrap: wrap;
+    padding: .25rem;
+}
+
+ul#contacts li{
+    width: 20%;
+    margin: .25rem;
+}
+
+ul#contacts li a{
+    color: var(--text);
+    font-size: 2rem;
+    text-decoration: none;
+    text-align: center;
+    display: block;
+    padding: .5rem;
+}
+
+ul#contacts li a:hover{
+    border: 1.75px dashed var(--text);
+}
+
+.mobile{
+    display: block;
+}
+
+.desktop{
+    display: none;
+}
+
+@media only screen and (min-width: 600px) {
+    .desktop{
+        display: block
+    }
+
+    .info{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .mobile{
+        display: none;
+    }
+
+    header{
+        margin-bottom: 3rem;
+    }
+
+    #tiles-grid ul{
+        height: 0;
+    }
+
+    #tiles-grid{
+        height: 23rem;
+    }
+}

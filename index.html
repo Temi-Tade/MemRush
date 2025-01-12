@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/fontawesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu">
+    <link rel="stylesheet" href="./assets/css/index.css">
+    <title>MemRush</title>
+</head>
+<body>
+    <main>
+        <header>
+            <nav>
+                <ul>
+                    <li class="ham">
+                        <button class="fa-solid fa-pause" onclick='CREATE_DIALOG(document.querySelector("#pause-menu").innerHTML);'></button>
+                        <p class="mode"></p>
+                    </li>
+
+                    <li id="score-wrap">
+                        <h4></h4>
+                    </li>
+
+                    <li class="desktop info">
+                        <p>Collected: 0/36<br/>(36 remaining)</p>
+                        <p id="now-playing" class="pseudo"></p>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="mobile info">
+            <p>Collected: 0/36<br/>(36 remaining)</p>
+            <p id="now-playing" class="pseudo"></p>
+        </section>
+
+        <section id="tiles-grid">
+            <ul></ul>
+        </section>
+
+        <div id="modalbg">
+            <div id="modal">information</div>
+        </div>
+
+        <div id='selectmode' class="pseudo">
+            <h2>Select Game Mode</h2>
+            <ul class='gamemodes'>
+                <li>
+                    <button value='one player' onclick="SET_GAME_MODE(this.value)"><i class='fa-solid fa-user'></i> One Player</button>
+                </li>
+    
+                <li>
+                    <button value='two players' onclick='SET_GAME_MODE(this.value)'><i class='fa-solid fa-user-group'></i> Two Players</button>
+                </li>
+            </ul>
+        </div>
+
+        <div id="twoplayersdata" class="pseudo">
+            <button class="fa-solid fa-caret-left transparent-btn back-btn" onclick='CREATE_DIALOG(document.querySelector("#selectmode").innerHTML)'></button>
+            <h2>Two Players</h2>
+            <form onsubmit="START_TWOPLAYER_MODE(event)" autocomplete="off" spellcheck="false">
+                <div class="field">
+                    <input type="text" id="player1" placeholder="PLAYER 1" oninput="VALIDATE_PLAYER_NAME(this, this.parentElement.nextElementSibling.querySelector('input'), this.parentElement.parentElement.querySelector('button'))">
+                </div>
+
+                <div class="field">
+                    <input type="text" id="player2" placeholder="PLAYER 2" oninput="VALIDATE_PLAYER_NAME(this, this.parentElement.previousElementSibling.querySelector('input'), this.parentElement.parentElement.querySelector('button'))">
+                </div>
+
+                <small><em>Player names should be unique and not exceed 7 characters</em></small>
+
+                <div class="field">
+                    <button type="submit" disabled>Continue</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="pause-menu" class="pseudo">
+            <div class="menu">
+                <h2>Menu</h2>
+                <ul id="menu-list">
+                    <li>
+                        <button class="transparent-btn" onclick="REMOVE_DIALOG()">Resume</button>
+                    </li>
+
+                    <li>
+                        <button class="transparent-btn" onclick='NEW_GAME()'>New Game</button>
+                    </li>
+
+                    <li>
+                        <button class="transparent-btn">About</button>
+                    </li>
+
+                    <li>
+                        <h3>Contacts</h3>
+                        <ul id="contacts">
+                            <li><a href="mailto:dev.mode006@gmail.com" class="fa-solid fa-envelope"></a></li>
+                            <li><a href="https://x.com/Js_cipher/" class="fa-brands fa-x-twitter"></a></li>
+                            <li><a href="https://github.com/Temi-Tade/" class="fa-brands fa-github"></a></li>
+                            <li><a href="https://t.me/kintade_/" class="fa-brands fa-telegram"></a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="./assets/js/index.js"></script>
+    <script src="./assets/js/ui.js"></script>
+    <script src="./assets/js/game.js"></script>
+</body>
+</html>
