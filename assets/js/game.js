@@ -4,7 +4,7 @@ window.addEventListener("DOMContentLoaded", function(){
 
 function SET_GAME_MODE(mode) {
     gameMode = mode;
-    GAME_MODE.innerHTML = `Mode:<br/>${gameMode}`;
+    GAME_MODE.innerHTML = mode === "one player" ? `Mode:<br/>${mode}` : "";
 
     if (gameMode === "one player") {
         REMOVE_DIALOG();
@@ -13,14 +13,16 @@ function SET_GAME_MODE(mode) {
         tiles.map((tile) => {
             tile.disabled = false;
         });
+        document.querySelector(".ham").style.width = "100%";
         return;
     } else {
+        document.querySelector(".ham").style.width = "auto";
         CREATE_DIALOG(document.querySelector("#twoplayersdata").innerHTML);
     }
 }
 
 function VALIDATE_PLAYER_NAME(el, other, btn){
-    if ((el.value.trim() && other.value.trim()) && ((el.value.trim().length <= 7) && (other.value.trim().length <= 7))) {
+    if ((el.value.trim() && other.value.trim()) && ((el.value.trim().length >= 3 && el.value.trim().length <= 7) && (other.value.trim().length >= 3 && other.value.trim().length <= 7))) {
         btn.disabled = false;
     } else {
         btn.disabled = true;
@@ -29,6 +31,13 @@ function VALIDATE_PLAYER_NAME(el, other, btn){
 
 function START_TWOPLAYER_MODE(e) {
     e.preventDefault();
+    player1 = {
+        name: undefined,
+        collected: 0,
+        isPlaying: false
+    }
+    
+    player2 = {...player1};
     var pl1 = document.querySelector("#player1").value.trim();
     var pl2 = document.querySelector("#player2").value.trim();
 
@@ -51,7 +60,6 @@ function START_TWOPLAYER_MODE(e) {
         <p>${player1.name}: ${player1.collected}</p>
         <p>${player2.name}: ${player2.collected}</p>
     `;
-    document.querySelector("header h4").setAttribute("id", "two-player-mode");
 
     REMOVE_DIALOG();
     tiles.map((tile) => {
@@ -86,7 +94,7 @@ function RENDER_ASSETS(array){
 }
 
 function NEW_GAME(){
-    assets = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17,18];
+    assets = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17,18,19,20];
     TILE.innerHTML = ""
     NOW_PLAYING.innerHTML = "";
     GAME_MODE.innerHTML = "";
@@ -115,7 +123,7 @@ function NEW_GAME(){
 }
 
 function CHECK_IS_COMPLETE() {
-    if (collected.length === 36) {
+    if (collected.length === 40) {
         if (gameMode === "two players") {
             if (player1.collected > player2.collected) {
                 CREATE_DIALOG(`
@@ -173,7 +181,7 @@ function COUNT_COLLECTED(){
         // }, 1600);
     }
     collected = [...document.querySelectorAll("#tiles-grid ul li button:disabled")];
-    INFO.innerHTML = `Collected: ${collected.length}/${tiles.length}<br/>(${tiles.length - collected.length} remaining.)`
+    INFO.map(info => info.innerHTML = `Collected: ${collected.length}/${tiles.length}<br/>(${tiles.length - collected.length} remaining.)`);
 }
 
 function COMPARE_TILES(first, second){
@@ -208,7 +216,28 @@ function COMPARE_TILES(first, second){
     }
 }
 
-// CREATE_ASSETS();
-// RENDER_ASSETS(assets);
+
+function GET_ABOUT(file){
+    try {
+        var request = new XMLHttpRequest();
+
+        request.open("GET", file);
+        request.onload = function (e) {
+            var text = e.target.status === 200 ? `${e.target.responseText}` : "An error occured. Please check your conection.";
+            var formattedText = text.replace("---", "\n")
+            document.querySelector("#about").innerHTML = formattedText;
+            CREATE_DIALOG(document.querySelector("#about").innerHTML);
+            window.onclick = function (e) {
+                if (e.target === MODALBG) {
+                    REMOVE_DIALOG();
+                }
+            }
+        }
+    
+        request.send();
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 NEW_GAME();

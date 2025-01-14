@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/fontawesome.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu">
@@ -17,14 +17,15 @@
                     <li class="ham">
                         <button class="fa-solid fa-pause" onclick='CREATE_DIALOG(document.querySelector("#pause-menu").innerHTML);'></button>
                         <p class="mode"></p>
+                        <p id="now-playing" class="pseudo"></p>
                     </li>
 
                     <li id="score-wrap">
-                        <h4></h4>
+                        <h4 id="two-player-mode"></h4>
                     </li>
 
                     <li class="desktop info">
-                        <p>Collected: 0/36<br/>(36 remaining)</p>
+                        <p>Collected: 0/40<br/>(40 remaining)</p>
                         <p id="now-playing" class="pseudo"></p>
                     </li>
                 </ul>
@@ -32,8 +33,7 @@
         </header>
 
         <section class="mobile info">
-            <p>Collected: 0/36<br/>(36 remaining)</p>
-            <p id="now-playing" class="pseudo"></p>
+            <p>Collected: 0/40<br/>(40 remaining)</p>
         </section>
 
         <section id="tiles-grid">
@@ -90,7 +90,7 @@
                     </li>
 
                     <li>
-                        <button class="transparent-btn">About</button>
+                        <button class="transparent-btn" onclick="GET_ABOUT('./README.md')">About</button>
                     </li>
 
                     <li>
@@ -105,6 +105,8 @@
                 </ul>
             </div>
         </div>
+
+        <div id="about" class="pseudo"></div>
     </main>
 
     <script src="./assets/js/index.js"></script>
@@ -118,4 +120,7 @@ disabled window resize mobile
 mobile header
 mobile tile grid
 mobile collected not counting
+readme typo
+mobile two player form
+prevent page reload mobile
 -->
