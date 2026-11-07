@@ -2,126 +2,246 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/fontawesome.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/index.css">
-    <title>MemRush</title>
+    <title>MemRush · Memory Match Game</title>
+    <meta name="description" content="MemRush is an addictive memory tile-matching game with single-player and head-to-head two-player duel modes.">
+    <meta property="og:title" content="MemRush · Memory Match Game">
+    <meta property="og:description" content="Match pairs of numbered cards, challenge friends, and test your memory skills.">
 </head>
 <body>
-    <main>
-        <header>
-            <nav>
-                <ul>
-                    <li class="ham">
-                        <button class="fa-solid fa-pause" onclick='CREATE_DIALOG(document.querySelector("#pause-menu").innerHTML);'></button>
-                        <p class="mode"></p>
-                        <p id="now-playing" class="pseudo"></p>
-                    </li>
+    <div class="ambient-glow ambient-1"></div>
+    <div class="ambient-glow ambient-2"></div>
+    <canvas id="confetti-canvas"></canvas>
 
-                    <li id="score-wrap">
-                        <h4 id="two-player-mode"></h4>
-                    </li>
+    <main class="app-container">
+        <!-- TOP HEADER HUD -->
+        <header class="game-header">
+            <nav class="nav-bar">
+                <div class="nav-left">
+                    <button id="btn-pause" class="icon-btn" title="Pause Game" onclick='CREATE_DIALOG(document.querySelector("#pause-menu").innerHTML);'>
+                        <i class="fa-solid fa-pause"></i>
+                    </button>
+                    <button id="btn-sound" class="icon-btn" title="Toggle Sound" onclick="TOGGLE_SOUND()">
+                        <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <div class="brand">
+                        <span class="brand-text">Mem<span>Rush</span></span>
+                    </div>
+                </div>
 
-                    <li class="desktop info">
-                        <p>Collected: 0/40<br/>(40 remaining)</p>
-                        <p id="now-playing" class="pseudo"></p>
-                    </li>
-                </ul>
+                <div class="nav-center">
+                    <!-- TWO PLAYERS SCORE HUD -->
+                    <div id="score-wrap" class="score-hud">
+                        <div class="player-pill" id="p1-pill">
+                            <span class="turn-dot"></span>
+                            <span class="p-name" id="hud-p1-name">P1</span>
+                            <span class="p-score" id="hud-p1-score">0</span>
+                        </div>
+                        <span class="hud-vs">VS</span>
+                        <div class="player-pill" id="p2-pill">
+                            <span class="turn-dot"></span>
+                            <span class="p-name" id="hud-p2-name">P2</span>
+                            <span class="p-score" id="hud-p2-score">0</span>
+                        </div>
+                        <h4 id="two-player-mode" class="pseudo"></h4>
+                    </div>
+
+                    <!-- SINGLE PLAYER HUD -->
+                    <div id="single-player-hud" class="single-hud">
+                        <span class="hud-badge"><i class="fa-solid fa-user"></i> Solo</span>
+                        <span id="now-playing" class="pseudo"></span>
+                        <p class="mode pseudo"></p>
+                    </div>
+                </div>
+
+                <div class="nav-right desktop info">
+                    <div class="stat-badge">
+                        <span class="stat-label">Collected</span>
+                        <span class="stat-value" id="desktop-collected">0 / 40</span>
+                    </div>
+                    <div class="stat-badge">
+                        <span class="stat-label">Moves</span>
+                        <span class="stat-value" id="desktop-moves">0</span>
+                    </div>
+                    <p class="pseudo">Collected: 0/40<br/>(40 remaining)</p>
+                </div>
             </nav>
+
+            <!-- PROGRESS BAR -->
+            <div class="progress-track" title="Game Progress">
+                <div id="game-progress-bar" class="progress-fill" style="width: 0%"></div>
+            </div>
         </header>
 
-        <section class="mobile info">
-            <p>Collected: 0/40<br/>(40 remaining)</p>
+        <!-- MOBILE STATS STRIP -->
+        <section class="mobile info stat-strip">
+            <div class="mobile-stat">
+                <span class="m-label">Pairs</span>
+                <span class="m-value" id="mobile-collected">0 / 40</span>
+            </div>
+            <div class="mobile-stat">
+                <span class="m-label">Remaining</span>
+                <span class="m-value" id="mobile-remaining">40</span>
+            </div>
+            <div class="mobile-stat">
+                <span class="m-label">Moves</span>
+                <span class="m-value" id="mobile-moves">0</span>
+            </div>
+            <p class="pseudo">Collected: 0/40<br/>(40 remaining)</p>
         </section>
 
-        <section id="tiles-grid">
-            <ul></ul>
-        </section>
-
-        <div id="modalbg">
-            <div id="modal">information</div>
+        <!-- TURN BANNER FOR MOBILE -->
+        <div id="mobile-turn-indicator" class="mobile-turn-banner pseudo">
+            <i class="fa-solid fa-gamepad"></i> <span id="mobile-turn-text">Player 1's turn</span>
         </div>
 
+        <!-- MAIN TILES BOARD -->
+        <section id="tiles-grid" class="board-section">
+            <ul class="cards-grid"></ul>
+        </section>
+
+        <!-- MODAL OVERLAY -->
+        <div id="modalbg" class="modal-backdrop">
+            <div id="modal" class="modal-card">
+                <!-- dynamic content rendered here -->
+            </div>
+        </div>
+
+        <!-- TEMPLATE: SELECT MODE -->
         <div id='selectmode' class="pseudo">
-            <h2>Select Game Mode</h2>
-            <ul class='gamemodes'>
-                <li>
-                    <button value='one player' onclick="SET_GAME_MODE(this.value)"><i class='fa-solid fa-user'></i> One Player</button>
-                </li>
-    
-                <li>
-                    <button value='two players' onclick='SET_GAME_MODE(this.value)'><i class='fa-solid fa-user-group'></i> Two Players</button>
-                </li>
-            </ul>
+            <div class="modal-content select-mode-modal">
+                <div class="modal-header">
+                    <div class="modal-icon-badge">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <h2>Choose Game Mode</h2>
+                    <p class="modal-subtitle">Select how you want to challenge your memory</p>
+                </div>
+
+                <div class='gamemodes-container'>
+                    <button class="mode-card" value='one player' onclick="SET_GAME_MODE(this.value)">
+                        <div class="mode-card-icon">
+                            <i class='fa-solid fa-user'></i>
+                        </div>
+                        <div class="mode-card-details">
+                            <h3>Solo Sprint</h3>
+                            <p>Match all 20 pairs at your own pace with move tracking</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right mode-arrow"></i>
+                    </button>
+        
+                    <button class="mode-card" value='two players' onclick='SET_GAME_MODE(this.value)'>
+                        <div class="mode-card-icon dual">
+                            <i class='fa-solid fa-user-group'></i>
+                        </div>
+                        <div class="mode-card-details">
+                            <h3>Head to Head</h3>
+                            <p>Pass & play duel. Take turns, steal pairs & compete for the high score</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right mode-arrow"></i>
+                    </button>
+                </div>
+            </div>
         </div>
 
+        <!-- TEMPLATE: TWO PLAYERS DATA -->
         <div id="twoplayersdata" class="pseudo">
-            <button class="fa-solid fa-caret-left transparent-btn back-btn" onclick='CREATE_DIALOG(document.querySelector("#selectmode").innerHTML)'></button>
-            <h2>Two Players</h2>
-            <form onsubmit="START_TWOPLAYER_MODE(event)" autocomplete="off" spellcheck="false">
-                <div class="field">
-                    <input type="text" id="player1" placeholder="PLAYER 1" oninput="VALIDATE_PLAYER_NAME(this, this.parentElement.nextElementSibling.querySelector('input'), this.parentElement.parentElement.querySelector('button'))">
+            <div class="modal-content twoplayers-modal">
+                <button class="back-btn icon-btn" title="Back to mode select" onclick='CREATE_DIALOG(document.querySelector("#selectmode").innerHTML)'>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <div class="modal-header">
+                    <div class="modal-icon-badge">
+                        <i class="fa-solid fa-swords"></i>
+                    </div>
+                    <h2>Enter Player Names</h2>
+                    <p class="modal-subtitle">Names must be unique and 3–7 characters long</p>
                 </div>
 
-                <div class="field">
-                    <input type="text" id="player2" placeholder="PLAYER 2" oninput="VALIDATE_PLAYER_NAME(this, this.parentElement.previousElementSibling.querySelector('input'), this.parentElement.parentElement.querySelector('button'))">
-                </div>
+                <form onsubmit="START_TWOPLAYER_MODE(event)" autocomplete="off" spellcheck="false" class="player-form">
+                    <div class="form-group">
+                        <label for="player1"><i class="fa-solid fa-user-astronaut"></i> Player 1</label>
+                        <div class="input-wrap">
+                            <input type="text" id="player1" maxlength="7" placeholder="e.g. ALEX" oninput="VALIDATE_PLAYER_NAME(this, document.querySelector('#player2'), document.querySelector('#submit-players-btn'))">
+                            <span class="char-count" id="p1-chars">0/7</span>
+                        </div>
+                    </div>
 
-                <small><em>Player names should be unique and not exceed 7 characters</em></small>
+                    <div class="form-group">
+                        <label for="player2"><i class="fa-solid fa-user-ninja"></i> Player 2</label>
+                        <div class="input-wrap">
+                            <input type="text" id="player2" maxlength="7" placeholder="e.g. SAM" oninput="VALIDATE_PLAYER_NAME(this, document.querySelector('#player1'), document.querySelector('#submit-players-btn'))">
+                            <span class="char-count" id="p2-chars">0/7</span>
+                        </div>
+                    </div>
 
-                <div class="field">
-                    <button type="submit" disabled>Continue</button>
-                </div>
-            </form>
+                    <div class="form-actions">
+                        <button type="submit" id="submit-players-btn" class="primary-btn" disabled>
+                            <span>Start Match</span>
+                            <i class="fa-solid fa-play"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
 
+        <!-- TEMPLATE: PAUSE MENU -->
         <div id="pause-menu" class="pseudo">
-            <div class="menu">
-                <h2>Menu</h2>
-                <ul id="menu-list">
+            <div class="modal-content pause-menu-modal">
+                <div class="modal-header">
+                    <h2>Game Menu</h2>
+                    <p class="modal-subtitle">Take a breather or start fresh</p>
+                </div>
+                <ul id="menu-list" class="menu-action-list">
                     <li>
-                        <button class="transparent-btn" onclick="REMOVE_DIALOG()">Resume</button>
+                        <button class="menu-action-btn primary-action" onclick="REMOVE_DIALOG()">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Resume Game</span>
+                        </button>
                     </li>
-
                     <li>
-                        <button class="transparent-btn" onclick='NEW_GAME()'>New Game</button>
+                        <button class="menu-action-btn" onclick='NEW_GAME()'>
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>New Game</span>
+                        </button>
                     </li>
-
                     <li>
-                        <button class="transparent-btn" onclick="GET_ABOUT('./README.md')">About</button>
+                        <button class="menu-action-btn" onclick="TOGGLE_SOUND_AND_REFRESH_MENU()">
+                            <i id="menu-sound-icon" class="fa-solid fa-volume-high"></i>
+                            <span id="menu-sound-text">Sound: ON</span>
+                        </button>
                     </li>
-
                     <li>
-                        <h3>Contacts</h3>
-                        <ul id="contacts">
-                            <li><a href="mailto:dev.mode006@gmail.com" class="fa-solid fa-envelope"></a></li>
-                            <li><a href="https://x.com/Js_cipher/" class="fa-brands fa-x-twitter"></a></li>
-                            <li><a href="https://github.com/Temi-Tade/" class="fa-brands fa-github"></a></li>
-                            <li><a href="https://t.me/kintade_/" class="fa-brands fa-telegram"></a></li>
-                        </ul>
+                        <button class="menu-action-btn" onclick="GET_ABOUT('./README.md')">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>About MemRush</span>
+                        </button>
                     </li>
                 </ul>
+
+                <div class="contacts-section">
+                    <span class="contacts-title">Creator & Links</span>
+                    <ul id="contacts" class="social-links">
+                        <li><a href="mailto:dev.mode006@gmail.com" class="fa-solid fa-envelope" title="Email" target="_blank" rel="noreferrer"></a></li>
+                        <li><a href="https://x.com/Js_cipher/" class="fa-brands fa-x-twitter" title="Twitter / X" target="_blank" rel="noreferrer"></a></li>
+                        <li><a href="https://github.com/Temi-Tade/" class="fa-brands fa-github" title="GitHub" target="_blank" rel="noreferrer"></a></li>
+                        <li><a href="https://t.me/kintade_/" class="fa-brands fa-telegram" title="Telegram" target="_blank" rel="noreferrer"></a></li>
+                    </ul>
+                </div>
             </div>
         </div>
 
         <div id="about" class="pseudo"></div>
     </main>
     
-    <script defer data-domain="temi-tade.github.io" src="https://webtracker.avikmukherjee.tech/tracking-script.js"></script>
     <script src="./assets/js/index.js"></script>
     <script src="./assets/js/ui.js"></script>
     <script src="./assets/js/game.js"></script>
 </body>
 </html>
-
-<!-- 
-disabled window resize mobile
-mobile header
-mobile tile grid
-mobile collected not counting
-readme typo
-mobile two player form
-prevent page reload mobile
--->

@@ -1,0 +1,8 @@
+{
+  "name": "MemRush",
+  "description": "A memory-based tile matching game supporting single-player and two-player head-to-head modes.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
